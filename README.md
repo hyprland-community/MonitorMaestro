@@ -13,8 +13,8 @@ Effortless Workflow:
 The TUI runs on a terminal, so it's up to you to add a `bind` in you Hyprland configs 
 
 ## Keybinds
-J - K to go down - up  
-q - ESC to exit
+J - K: go down - up the list  
+q - ESC: exit
 
 
 ## Installation
