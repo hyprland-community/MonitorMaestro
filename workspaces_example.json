@@ -1,7 +1,6 @@
 {
-  "workspaces": [
-    {
-      "name": "Normal",
+  "workspaces": {
+    "Normal": {
       "monitors": [
         {
           "name": "eDP-1",
@@ -19,11 +18,14 @@
               "scaling": 1.25
             }
           }
+        },
+        {
+          "name": "HDMI-A-1",
+          "state": "Disabled"
         }
       ]
     },
-    {
-      "name": "Home",
+    "Home": {
       "monitors": [
         {
           "name": "HDMI-A-1",
@@ -61,8 +63,7 @@
         }
       ]
     },
-    {
-      "name": "HomeOneMonitor",
+    "HomeOneMonitor": {
       "monitors": [
         {
           "name": "HDMI-A-1",
@@ -87,5 +88,5 @@
         }
       ]
     }
-  ]
+  }
 }

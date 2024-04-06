@@ -18,6 +18,7 @@ pub struct Monitor {
 }
 
 impl Monitor {
+    #[allow(unused)]
     pub fn new(name: &str, state: State) -> Self {
         Self {
             name: name.to_owned(),
@@ -28,12 +29,13 @@ impl Monitor {
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct WorkSpace {
-    #[serde(rename = "name")]
+    #[serde(skip)]
     pub workspace_name: String,
     monitors: Vec<Monitor>,
 }
 
 impl WorkSpace {
+    #[allow(unused)]
     pub fn new(workspace_name: &str, monitors: Vec<Monitor>) -> Self {
         Self {
             workspace_name: workspace_name.to_owned(),
@@ -52,10 +54,13 @@ impl WorkSpace {
                     rerfresh_rate,
                     scaling,
                 } => {
-                        let (x, y) = dimensions;
-                        let (x_pos, y_pos) = position;
-                        format!("{}x{}@{},{}x{},{}", x, y, rerfresh_rate, x_pos, y_pos, scaling)
-                    }
+                    let (x, y) = dimensions;
+                    let (x_pos, y_pos) = position;
+                    format!(
+                        "{}x{}@{},{}x{},{}",
+                        x, y, rerfresh_rate, x_pos, y_pos, scaling
+                    )
+                }
                 State::Disabled => "disable".to_owned(),
             };
 

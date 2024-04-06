@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     io::{stdout, Stdout},
     process::Command,
 };
@@ -11,7 +12,7 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::Alignment,
-    style::{Color, Modifier, Style, Styled},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{block::Title, Block, Borders, List, ListItem},
     Frame, Terminal,
@@ -42,7 +43,10 @@ pub fn run(path: Option<&str>) -> std::io::Result<()> {
 }
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct App {
-    workspaces: Vec<WorkSpace>,
+    pub workspaces: HashMap<String, WorkSpace>,
+
+    #[serde(skip)]
+    pub ws_names: Vec<String>,
 
     #[serde(skip)]
     index: usize,
@@ -51,10 +55,17 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(workspaces: Vec<WorkSpace>) -> Self {
+    #[allow(unused)]
+    pub fn new(workspaces: HashMap<String, WorkSpace>) -> Self {
+        let mut ws_names = Vec::<String>::new();
+        for (name, ws) in workspaces.iter() {
+            ws_names.push(name.clone());
+        }
+
         Self {
-            index: 0,
             workspaces,
+            ws_names,
+            index: 0,
             exit: false,
         }
     }
@@ -66,7 +77,15 @@ impl App {
         };
 
         let data = std::fs::read_to_string(path)?;
-        let app: App = serde_json::from_str(&data)?;
+        let mut app: App = serde_json::from_str(&data)?;
+
+        let mut ws_names = Vec::<String>::new();
+        for (name, _) in &app.workspaces {
+            ws_names.push(name.clone());
+        }
+        // Sorting alfabetically
+        ws_names.sort();
+        app.ws_names = ws_names;
 
         Ok(app)
     }
@@ -89,14 +108,14 @@ impl App {
 
         let mut list = Vec::<ListItem>::new();
 
-        for (i, ws) in self.workspaces.iter().enumerate() {
+        for (i, ws_name) in self.ws_names.iter().enumerate() {
             let style = if i == self.index {
                 Style::default().fg(Color::Yellow)
             } else {
                 Style::default()
             };
             list.push(ListItem::new(
-                Line::from(Span::from(format!("{}", ws.workspace_name)))
+                Line::from(Span::from(format!("{}", ws_name)))
                     .alignment(Alignment::Center)
                     .style(style),
             ));
@@ -140,9 +159,10 @@ impl App {
     }
 
     fn execute_selected(&mut self) {
+        let ws_name = &self.ws_names[self.index];
         let _ = Command::new("sh")
             .arg("-c")
-            .arg(self.workspaces[self.index].command())
+            .arg(self.workspaces[ws_name].command())
             .output();
     }
 }

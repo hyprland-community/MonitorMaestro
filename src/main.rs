@@ -1,22 +1,18 @@
-#![allow(unused)]
-use std::env;
+use clap::Parser;
+use cli::Cli;
 
-use workspaces::WorkSpace;
-
-use crate::{
-    tui::App,
-    workspaces::{Monitor, State},
-};
-
+mod cli;
+mod tests;
 mod tui;
 mod workspaces;
 
 fn main() -> std::io::Result<()> {
-    let args: Vec<String> = env::args().collect();
-    let path = if args.len() > 1 {
-        Some(args[1].as_str())
-    } else {
-        None
-    };
-    tui::run(path)
+    let args = Cli::parse();
+
+    if args.tui == true {
+        let path = args.conf.as_deref();
+        tui::run(path)?;
+    }
+
+    Ok(())
 }
