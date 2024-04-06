@@ -81,7 +81,7 @@ impl App {
     }
 
     fn render_frame(&mut self, f: &mut Frame) {
-        let title = Title::from("WorkSpace selector");
+        let title = Title::from("WorkSpaces");
         let block = Block::default()
             .borders(Borders::ALL)
             .title(title)
