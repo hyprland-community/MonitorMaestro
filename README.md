@@ -12,6 +12,11 @@ Effortless Workflow:
 
 The TUI runs on a terminal, so it's up to you to add a `bind` in you Hyprland configs 
 
+## Keybinds
+J - K to go down - up  
+q - ESC to exit
+
+
 ## Installation
 Clone the repo, build with `cargo` and copy the executable wherever you choose.
 
