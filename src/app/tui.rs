@@ -5,7 +5,7 @@ use ratatui::{
     layout::Alignment,
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{block::Title, Block, Borders, List, ListItem},
+    widgets::{block::Title, Block, BorderType, Borders, List, ListItem},
     Frame,
 };
 use serde::{Deserialize, Serialize};
@@ -87,16 +87,19 @@ impl App {
         let title = Title::from("WorkSpaces");
         let block = Block::default()
             .borders(Borders::ALL)
+            .border_type(BorderType::Rounded)
+            .border_style(Style::default().fg(Color::LightCyan))
             .title(title)
+            .title_style(Style::default().fg(Color::White))
             .title_alignment(Alignment::Center);
 
         let mut list = Vec::<ListItem>::new();
 
         for (i, ws_name) in self.ws_names.iter().enumerate() {
             let style = if i == self.index {
-                Style::default().fg(Color::Yellow)
+                Style::default().fg(Color::LightYellow)
             } else {
-                Style::default()
+                Style::default().fg(Color::DarkGray)
             };
             list.push(ListItem::new(
                 Line::from(Span::from(ws_name.to_string()))
