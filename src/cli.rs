@@ -7,10 +7,10 @@ pub struct Cli {
     pub conf: Option<String>,
 
     /// workspace at startup
-    #[arg(short, long, default_value = "None")]
+    #[arg(short, long, default_value = None)]
     pub workspace: Option<String>,
 
     /// start in tui mode
-    #[arg(short, long, default_value = "true")]
+    #[arg(short, long, default_value = "false")]
     pub tui: bool,
 }

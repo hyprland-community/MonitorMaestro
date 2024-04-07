@@ -3,7 +3,7 @@ mod tests {
     use std::collections::HashMap;
 
     use crate::{
-        tui::App,
+        app::tui::App,
         workspaces::{Monitor, State, WorkSpace},
     };
 
