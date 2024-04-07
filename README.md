@@ -16,7 +16,7 @@ If you want an example, take a look at my Hyprlad [dotfiles](https://github.com/
 ## Functionality
 The program has 3 execution options:  
 - tui: start the TUI
-- workspace <NAME>: no tui, only run the commands to start the specified workspace
+- workspace \<NAME\>: no tui, only run the commands to start the specified workspace
 - state: get the current workspace from the file `/tmp/monitor_maestro_state.txt`, auto-handled
 
 ## Keybinds
