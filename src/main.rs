@@ -10,10 +10,12 @@ fn main() -> std::io::Result<()> {
     let args = Cli::parse();
 
     let path = args.conf.as_deref().unwrap();
-    if args.workspace.is_some() {
-        app::start_workspace(path, args.workspace.as_deref().unwrap())?;
-    } else if args.tui == true {
-        app::run_tui(path)?;
+    match args.command {
+        cli::Command::Tui => app::run_tui(path)?,
+        cli::Command::GetState => app::get_state(path)?,
+        cli::Command::StartWorkspace { name } => {
+            app::start_workspace(path, &name)?;
+        }
     }
 
     Ok(())

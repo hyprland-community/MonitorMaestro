@@ -29,9 +29,13 @@ pub fn start_workspace(path: &str, workspace: &str) -> std::io::Result<()> {
     App::from_config(path)?.start_workspace(workspace)
 }
 
+pub fn get_state(path: &str) -> std::io::Result<()> {
+    App::from_config(path)?.get_state()
+}
+
 pub fn run_tui(path: &str) -> std::io::Result<()> {
     let mut terminal = init()?;
-    let _ = tui::App::from_config(path)?.run(&mut terminal);
+    let _ = tui::App::from_config(path)?.run_tui(&mut terminal);
     restore()?;
     Ok(())
 }

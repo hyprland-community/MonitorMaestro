@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap,
-    process::Command,
-};
+use std::{collections::HashMap, fs::File, io::Write, process::Command};
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
@@ -61,7 +58,7 @@ impl App {
         Ok(app)
     }
 
-    pub fn run(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
+    pub fn run_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
         while !self.exit {
             terminal.draw(|frame| self.render_frame(frame))?;
             self.handle_events()?;
@@ -70,12 +67,18 @@ impl App {
         Ok(())
     }
 
+    pub fn get_state(&mut self) -> std::io::Result<()> {
+        let state = std::fs::read_to_string("/tmp/monitor_maestro_state.txt")?;
+        println!("{}", state);
+
+        Ok(())
+    }
+
     pub fn start_workspace(&mut self, workspace: &str) -> std::io::Result<()> {
         let ws = &self.workspaces[workspace];
-        Command::new("sh")
-            .arg("-c")
-            .arg(ws.command())
-            .output()?;
+        let mut file = File::create("/tmp/monitor_maestro_state.txt")?;
+        file.write(workspace.as_bytes())?;
+        let _ = Command::new("sh").arg("-c").arg(ws.command()).output();
 
         Ok(())
     }
@@ -141,10 +144,13 @@ impl App {
 
     fn execute_selected(&mut self) -> std::io::Result<()> {
         let ws_name = &self.ws_names[self.index];
-        Command::new("sh")
+        let _ = Command::new("sh")
             .arg("-c")
             .arg(self.workspaces[ws_name].command())
-            .output()?;
+            .output();
+
+        let mut file = File::create("/tmp/monitor_maestro_state.txt")?;
+        file.write(ws_name.as_bytes())?;
 
         Ok(())
     }
