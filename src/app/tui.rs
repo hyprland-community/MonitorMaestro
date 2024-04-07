@@ -48,7 +48,7 @@ impl App {
         let mut app: App = serde_json::from_str(&data)?;
 
         let mut ws_names = Vec::<String>::new();
-        for (name, _) in &app.workspaces {
+        for name in app.workspaces.keys() {
             ws_names.push(name.clone());
         }
         // Sorting alfabetically
@@ -77,7 +77,7 @@ impl App {
     pub fn start_workspace(&mut self, workspace: &str) -> std::io::Result<()> {
         let ws = &self.workspaces[workspace];
         let mut file = File::create("/tmp/monitor_maestro_state.txt")?;
-        file.write(workspace.as_bytes())?;
+        file.write_all(workspace.as_bytes())?;
         let _ = Command::new("sh").arg("-c").arg(ws.command()).output();
 
         Ok(())
@@ -99,7 +99,7 @@ impl App {
                 Style::default()
             };
             list.push(ListItem::new(
-                Line::from(Span::from(format!("{}", ws_name)))
+                Line::from(Span::from(ws_name.to_string()))
                     .alignment(Alignment::Center)
                     .style(style),
             ));
@@ -150,7 +150,7 @@ impl App {
             .output();
 
         let mut file = File::create("/tmp/monitor_maestro_state.txt")?;
-        file.write(ws_name.as_bytes())?;
+        file.write_all(ws_name.as_bytes())?;
 
         Ok(())
     }

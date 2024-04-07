@@ -5,13 +5,13 @@ pub enum Command {
     #[default]
     Tui,
 
-    #[clap(name="state")]
+    #[clap(name = "state")]
     GetState,
 
-    #[clap(name="workspace")]
-    StartWorkspace{
+    #[clap(name = "workspace")]
+    StartWorkspace {
         #[arg(index = 1)]
-        name: String
+        name: String,
     },
 }
 
