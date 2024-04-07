@@ -16,6 +16,7 @@ use super::Tui;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct App {
+    #[serde(flatten)]
     pub workspaces: HashMap<String, WorkSpace>,
 
     #[serde(skip)]
