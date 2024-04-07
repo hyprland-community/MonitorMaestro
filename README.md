@@ -12,21 +12,29 @@ Effortless Workflow:
 
 The TUI runs on a terminal, so it's up to you to add a `bind` in you Hyprland configs 
 
+## Functionality
+The program can either be started in tui mode by specifying the `-t / --tui` flag, or if the optional `-w / --workspace <WORKSPACE_NAME>` flag is present,  
+the program will run the associated command to start that monitor(s) layout
+
 ## Keybinds
-J - K: go down - up the list  
-q - ESC: exit
+`j - k`: go down - up the list  
+`q - ESC`: exit
 
 
 ## Installation
-Clone the repo, build with `cargo` and copy the executable wherever you choose.
+Clone the repo, then build with `cargo` 
+```bash
+cargo build --release
+```
+and copy the executable `monitor_maestro` wherever you choose.
 
 ## Configuration
-An example workspaces configuration json [file](./workspaces_example.json) is provided
-A monitor can either be Enabled, and requires the fields:
+An example workspaces configuration json [file](./workspaces_example.json) is provided  
+A monitor can either be __Enabled__, and requires the fields:
 - dimensions
 - refresh rate
 - position
 - scaling
 
-Or Disabled
+Or __Disabled__
 
