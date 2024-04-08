@@ -28,15 +28,25 @@ impl Monitor {
 
     pub fn get_info(&self) -> Option<((u32, u32), (u32, u32), u32, f32)> {
         match self.state {
-            State::Enabled { dimensions, position, rerfresh_rate, scaling} => Some((dimensions, position, rerfresh_rate, scaling)),
-            State::Disabled => None, 
+            State::Enabled {
+                dimensions,
+                position,
+                rerfresh_rate,
+                scaling,
+            } => Some((dimensions, position, rerfresh_rate, scaling)),
+            State::Disabled => None,
         }
     }
 
     pub fn get_position(&self) -> Option<(u32, u32)> {
         match self.state {
-            State::Enabled { dimensions, position, rerfresh_rate, scaling} => Some(position),
-            State::Disabled => None, 
+            State::Enabled {
+                dimensions: _,
+                position,
+                rerfresh_rate: _,
+                scaling: _,
+            } => Some(position),
+            State::Disabled => None,
         }
     }
 }

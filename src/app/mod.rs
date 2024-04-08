@@ -6,8 +6,6 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 
-use crate::cli::Mode;
-
 use self::tui::App;
 
 pub mod tui;
@@ -50,7 +48,7 @@ pub fn run_list_tui(path: &str) -> std::io::Result<()> {
 
 pub fn run_interactive_tui() -> std::io::Result<()> {
     let mut terminal = init()?;
-    let _ = tui::App::default().run_interactive_tui(&mut terminal)?;
+    tui::App::default().run_interactive_tui(&mut terminal)?;
     restore()?;
     Ok(())
 }

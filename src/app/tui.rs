@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs::File, io::Write, process::Command, string::FromUtf8Error};
+use std::{collections::HashMap, fs::File, io::Write, process::Command};
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
@@ -81,6 +81,7 @@ impl App {
     }
 
     pub fn run_list_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
+        self.mode = Mode::List;
         while !self.exit {
             terminal.draw(|frame| self.render_list_frame(frame))?;
             self.handle_events()?;
@@ -201,7 +202,7 @@ impl App {
                     let name_x = m_rect.x + m_rect.width / 2. - 5.;
                     let name_y = m_rect.y + m_rect.height / 2.;
                     let name_res = format!("{}, {}x{}", m.name.clone(), width, height);
-                    let infos = format!("{}x{}, {}", x, y, scale); 
+                    let infos = format!("{}x{}, {}", x, y, scale);
                     ctx.print(name_x, name_y, name_res);
                     ctx.print(name_x, name_y - 2., infos);
 
@@ -259,7 +260,6 @@ impl App {
         match key_event.code {
             KeyCode::Char('h') => {
                 self.selected_monitor = (self.selected_monitor - 1) % self.monitors.len();
-
             }
             KeyCode::Char('l') => {
                 self.selected_monitor = (self.selected_monitor + 1) % self.monitors.len();

@@ -7,7 +7,7 @@ pub enum Mode {
     List,
 
     #[clap(name = "interactive")]
-    Interactive
+    Interactive,
 }
 
 #[derive(Debug, Subcommand)]
@@ -18,7 +18,7 @@ pub enum Command {
         mode: Mode,
     },
 
-    /// get current monitor layout 
+    /// get current monitor layout
     #[clap(name = "state")]
     GetState,
 
@@ -31,9 +31,8 @@ pub enum Command {
 
     /// get attached monitors
     #[clap(name = "monitors")]
-    Monitors
+    Monitors,
 }
-
 
 #[derive(Debug, Parser)]
 pub struct Cli {
