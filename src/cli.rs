@@ -24,8 +24,4 @@ pub struct Cli {
     /// Command to run
     #[command(subcommand)]
     pub command: Command,
-
-    /// workspace at startup
-    #[arg(short, long, default_value = None)]
-    pub workspace: Option<String>,
 }
