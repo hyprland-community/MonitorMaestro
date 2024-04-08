@@ -42,3 +42,7 @@ A monitor can either be __Enabled__, and requires the fields:
 
 Or __Disabled__
 
+
+## Milestones
+- [ ] Dynamic TUI showing rectangles as current monitor layout, in a pseudo realistic way  
+- [ ] TUI for interactive monitor layout creation and json output
