@@ -28,10 +28,10 @@ __list__:
     - `q - ESC`: exit   
     - `Enter`: select monitor layout  
 
-__interactive__:  
-    - `h - l`: go left - right the monitor rectangles
-    - `q - ESC`: exit
-    - `Enter`: WIP
+__interactive__:    
+    - `h - l`: go left - right the monitor rectangles  
+    - `q - ESC`: exit  
+    - `Enter`: WIP  
 
 
 ## Installation
