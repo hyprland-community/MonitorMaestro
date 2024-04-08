@@ -21,7 +21,7 @@ The program has 3 execution options:
 
 ## Keybinds
 `j - k`: go down - up the list  
-`q - ESC`: exit
+`q - ESC`: exit  
 `Enter`: select monitor layout
 
 
