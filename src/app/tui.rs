@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs::File, io::Write, process::Command};
+use std::{collections::HashMap, fs::File, io::Write, process::Command, string::FromUtf8Error};
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
@@ -8,7 +8,9 @@ use ratatui::{
     widgets::{block::Title, Block, BorderType, Borders, List, ListItem},
     Frame,
 };
+use regex::Regex;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::workspaces::WorkSpace;
 
@@ -71,6 +73,26 @@ impl App {
     pub fn get_state(&mut self) -> std::io::Result<()> {
         let state = std::fs::read_to_string("/tmp/monitor_maestro_state.txt")?;
         println!("{}", state);
+
+        Ok(())
+    }
+
+    pub fn connected_monitors() -> std::io::Result<()> {
+        let output = Command::new("sh")
+            .arg("-c")
+            .arg("hyprctl -j monitors")
+            .output()?;
+
+        let json: Vec<Value> = serde_json::from_str(&String::from_utf8(output.stdout).unwrap()).unwrap();
+        for monitor in json.iter() {
+            let name = monitor["name"].as_str().unwrap();
+            let (width, height) = (monitor["width"].as_u64().unwrap(), monitor["height"].as_u64().unwrap());
+            let rr = monitor["refreshRate"].as_f64().unwrap();
+            let (x, y) = (monitor["x"].as_u64().unwrap(), monitor["y"].as_u64().unwrap());
+            let scale = monitor["scale"].as_f64().unwrap();
+
+            println!("{},{}x{}@{},{}x{},{}", name, width, height, rr, x, y, scale);
+        }
 
         Ok(())
     }

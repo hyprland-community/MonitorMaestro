@@ -33,6 +33,10 @@ pub fn get_state(path: &str) -> std::io::Result<()> {
     App::from_config(path)?.get_state()
 }
 
+pub fn get_monitors() -> std::io::Result<()> {
+   App::connected_monitors() 
+}
+
 pub fn run_tui(path: &str) -> std::io::Result<()> {
     let mut terminal = init()?;
     let _ = tui::App::from_config(path)?.run_tui(&mut terminal);

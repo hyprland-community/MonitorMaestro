@@ -16,6 +16,7 @@ fn main() -> std::io::Result<()> {
         cli::Command::StartWorkspace { name } => {
             app::start_workspace(path, &name)?;
         }
+        cli::Command::Monitors => app::get_monitors()?,
     }
 
     Ok(())
