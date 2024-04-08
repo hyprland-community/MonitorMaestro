@@ -102,7 +102,7 @@ impl App {
         Ok(())
     }
 
-    pub fn get_state(&mut self) -> std::io::Result<()> {
+    pub fn get_state() -> std::io::Result<()> {
         let state = std::fs::read_to_string("/tmp/monitor_maestro_state.txt")?;
         println!("{}", state);
 

@@ -29,8 +29,8 @@ pub fn start_workspace(path: &str, workspace: &str) -> std::io::Result<()> {
     App::from_config(path)?.start_workspace(workspace)
 }
 
-pub fn get_state(path: &str) -> std::io::Result<()> {
-    App::from_config(path)?.get_state()
+pub fn get_state() -> std::io::Result<()> {
+    App::get_state()
 }
 
 pub fn get_monitors() -> std::io::Result<()> {
