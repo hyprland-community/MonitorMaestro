@@ -12,7 +12,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::workspaces::WorkSpace;
+use crate::workspaces::{Monitor, State, WorkSpace};
 
 use super::Tui;
 
@@ -77,24 +77,41 @@ impl App {
         Ok(())
     }
 
-    pub fn connected_monitors() -> std::io::Result<()> {
+    pub fn connected_monitors() -> std::io::Result<Vec<Monitor>> {
         let output = Command::new("sh")
             .arg("-c")
             .arg("hyprctl -j monitors")
             .output()?;
 
-        let json: Vec<Value> = serde_json::from_str(&String::from_utf8(output.stdout).unwrap()).unwrap();
-        for monitor in json.iter() {
-            let name = monitor["name"].as_str().unwrap();
-            let (width, height) = (monitor["width"].as_u64().unwrap(), monitor["height"].as_u64().unwrap());
-            let rr = monitor["refreshRate"].as_f64().unwrap();
-            let (x, y) = (monitor["x"].as_u64().unwrap(), monitor["y"].as_u64().unwrap());
-            let scale = monitor["scale"].as_f64().unwrap();
+        let mut monitors = Vec::<Monitor>::new();
 
+        let json: Vec<Value> =
+            serde_json::from_str(&String::from_utf8(output.stdout).unwrap()).unwrap();
+        for mon_str in json.iter() {
+            let name = mon_str["name"].as_str().unwrap();
+            let (width, height) = (
+                mon_str["width"].as_u64().unwrap(),
+                mon_str["height"].as_u64().unwrap(),
+            );
+            let rr = mon_str["refreshRate"].as_f64().unwrap();
+            let (x, y) = (
+                mon_str["x"].as_u64().unwrap(),
+                mon_str["y"].as_u64().unwrap(),
+            );
+            let scale = mon_str["scale"].as_f64().unwrap();
+
+            let state = State::Enabled {
+                dimensions: (width as u32, height as u32),
+                position: (x as u32, y as u32),
+                rerfresh_rate: rr as u32,
+                scaling: scale as f32,
+            };
+            let monitor = Monitor::new(name, state);
+            println!("{:?}", monitor);
             println!("{},{}x{}@{},{}x{},{}", name, width, height, rr, x, y, scale);
         }
 
-        Ok(())
+        Ok(monitors)
     }
 
     pub fn start_workspace(&mut self, workspace: &str) -> std::io::Result<()> {

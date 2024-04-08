@@ -34,7 +34,9 @@ pub fn get_state(path: &str) -> std::io::Result<()> {
 }
 
 pub fn get_monitors() -> std::io::Result<()> {
-   App::connected_monitors() 
+    let _ = App::connected_monitors();
+
+    Ok(())
 }
 
 pub fn run_tui(path: &str) -> std::io::Result<()> {
