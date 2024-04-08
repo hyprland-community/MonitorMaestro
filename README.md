@@ -15,14 +15,23 @@ If you want an example, take a look at my Hyprlad [dotfiles](https://github.com/
 
 ## Functionality
 The program has 3 execution options:  
-- tui: start the TUI
-- workspace \<NAME\>: no tui, only run the commands to start the specified workspace
-- state: get the current workspace from the file `/tmp/monitor_maestro_state.txt`, auto-handled
+- __tui__ \<MODE\>: start the TUI, either in:  
+    - __list__: list workspaces from config file and select one  
+    - __interactive__: draw current monitors with rectangles (needs a larger terminal window)  
+- __workspace__ \<NAME\>: no tui, only run the commands to start the specified workspace  
+- __state__: get the current workspace from the file `/tmp/monitor_maestro_state.txt`, auto-handled  
 
 ## Keybinds
-`j - k`: go down - up the list  
-`q - ESC`: exit  
-`Enter`: select monitor layout
+Tui in mode:  
+__list__:  
+    - `j - k`: go down - up the list  
+    - `q - ESC`: exit   
+    - `Enter`: select monitor layout  
+
+__interactive__:  
+    - `h - l`: go left - right the monitor rectangles
+    - `q - ESC`: exit
+    - `Enter`: WIP
 
 
 ## Installation
@@ -34,15 +43,16 @@ and copy the executable `monitor_maestro` wherever you choose.
 
 ## Configuration
 An example workspaces configuration json [file](./workspaces_example.json) is provided  
-A monitor can either be __Enabled__, and requires the fields:
-- dimensions
-- refresh rate
-- position
-- scaling
+A monitor can either be:  
+- __Enabled__, and requires the fields:  
+    - dimensions  
+    - refresh rate  
+    - position  
+    - scaling  
 
-Or __Disabled__
+- __Disabled__
 
 
 ## Milestones
-- [ ] Dynamic TUI showing rectangles as current monitor layout, in a pseudo realistic way  
+- [X] Dynamic TUI showing rectangles as current monitor layout, in a pseudo realistic way  
 - [ ] TUI for interactive monitor layout creation and json output
