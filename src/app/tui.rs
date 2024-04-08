@@ -23,6 +23,8 @@ use crate::{
 
 use super::Tui;
 
+const SCALE: f64 = 1. / 50.;
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct App {
     #[serde(flatten)]
@@ -137,8 +139,6 @@ impl App {
                 scaling: scale as f32,
             };
             let monitor = Monitor::new(name, state);
-            // println!("{:?}", monitor);
-            // println!("{},{}x{}@{},{}x{},{}", name, width, height, rr, x, y, scale);
             monitors.push(monitor);
         }
 
@@ -178,6 +178,17 @@ impl App {
             x1.cmp(&x2)
         });
 
+        let mut width_sum = 0;
+        let mut height_sum = 0;
+        self.monitors.iter().for_each(|m| {
+            let (w, h) = m.get_size().unwrap();
+            width_sum += w;
+            height_sum += h;
+        });
+
+        let x_start = (right - f64::from(width_sum) * SCALE) / 2.;
+        let y_start = f64::from(height_sum) * SCALE / 2.;
+
         let canvas = Canvas::default()
             .block(block)
             .marker(Marker::HalfBlock)
@@ -192,11 +203,15 @@ impl App {
                     };
 
                     let ((width, height), (x, y), _, scale) = m.get_info().unwrap();
+
+                    // the position of the monitors for Hyprland starts from the top left corner,
+                    // while the rectangle is defined from the bottom left, hence the
+                    // 2*y_start - f64::from(height)
                     let m_rect = Rectangle {
-                        x: f64::from(x) / 50.,
-                        y: f64::from(y) / 50.,
-                        width: f64::from(width).mul_add(1. / 50., 0.),
-                        height: f64::from(height).mul_add(1. / 50., 0.),
+                        x: x_start + f64::from(x) * SCALE,
+                        y: 2. * y_start - f64::from(height) * SCALE,
+                        width: f64::from(width).mul_add(SCALE, 0.),
+                        height: f64::from(height).mul_add(SCALE, 0.),
                         color,
                     };
                     let name_x = m_rect.x + m_rect.width / 2. - 5.;
