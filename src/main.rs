@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
             cli::Mode::List => app::run_list_tui(path)?,
             cli::Mode::Interactive => app::run_interactive_tui()?,
         },
-        cli::Command::GetState => app::get_state(path)?,
+        cli::Command::GetState => app::get_state()?,
         cli::Command::StartWorkspace { name } => {
             app::start_workspace(path, &name)?;
         }
