@@ -49,6 +49,18 @@ impl Monitor {
             State::Disabled => None,
         }
     }
+
+    pub fn get_size(&self) -> Option<(u32, u32)> {
+        match self.state {
+            State::Enabled {
+                dimensions,
+                position: _,
+                rerfresh_rate: _,
+                scaling: _,
+            } => Some(dimensions),
+            State::Disabled => None,
+        }
+    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
