@@ -4,15 +4,22 @@ use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     layout::Alignment,
     style::{Color, Modifier, Style},
+    symbols::Marker,
     text::{Line, Span},
-    widgets::{block::Title, Block, BorderType, Borders, List, ListItem},
+    widgets::{
+        block::Title,
+        canvas::{Canvas, Rectangle},
+        Block, BorderType, Borders, List, ListItem,
+    },
     Frame,
 };
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::workspaces::{Monitor, State, WorkSpace};
+use crate::{
+    cli::Mode,
+    workspaces::{Monitor, State, WorkSpace},
+};
 
 use super::Tui;
 
@@ -23,6 +30,15 @@ pub struct App {
 
     #[serde(skip)]
     pub ws_names: Vec<String>,
+
+    #[serde(skip)]
+    mode: Mode,
+
+    #[serde(skip)]
+    monitors: Vec<Monitor>,
+
+    #[serde(skip)]
+    selected_monitor: usize,
 
     #[serde(skip)]
     index: usize,
@@ -41,6 +57,9 @@ impl App {
         Self {
             workspaces,
             ws_names,
+            mode: Mode::List,
+            monitors: Vec::new(),
+            selected_monitor: 0,
             index: 0,
             exit: false,
         }
@@ -61,9 +80,19 @@ impl App {
         Ok(app)
     }
 
-    pub fn run_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
+    pub fn run_list_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
         while !self.exit {
-            terminal.draw(|frame| self.render_frame(frame))?;
+            terminal.draw(|frame| self.render_list_frame(frame))?;
+            self.handle_events()?;
+        }
+        Ok(())
+    }
+
+    pub fn run_interactive_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
+        self.monitors = App::connected_monitors().unwrap();
+        self.mode = Mode::Interactive;
+        while !self.exit {
+            terminal.draw(|frame| self.render_interactive_frame(frame))?;
             self.handle_events()?;
         }
 
@@ -107,8 +136,9 @@ impl App {
                 scaling: scale as f32,
             };
             let monitor = Monitor::new(name, state);
-            println!("{:?}", monitor);
-            println!("{},{}x{}@{},{}x{},{}", name, width, height, rr, x, y, scale);
+            // println!("{:?}", monitor);
+            // println!("{},{}x{}@{},{}x{},{}", name, width, height, rr, x, y, scale);
+            monitors.push(monitor);
         }
 
         Ok(monitors)
@@ -123,7 +153,63 @@ impl App {
         Ok(())
     }
 
-    fn render_frame(&mut self, f: &mut Frame) {
+    fn render_interactive_frame(&mut self, f: &mut Frame) {
+        let title = Title::from("Monitors");
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .border_type(BorderType::Rounded)
+            .border_style(Style::default().fg(Color::LightCyan))
+            .title(title)
+            .title_style(Style::default().fg(Color::White))
+            .title_alignment(Alignment::Center);
+
+        let area = f.size();
+
+        let left = 0.0;
+        let right = f64::from(area.width);
+        let bottom = 0.0;
+        let top = f64::from(area.height).mul_add(2., -4.);
+
+        self.monitors.sort_by(|m1, m2| {
+            let (x1, _) = m1.get_position().unwrap();
+            let (x2, _) = m2.get_position().unwrap();
+
+            x1.cmp(&x2)
+        });
+
+        let canvas = Canvas::default()
+            .block(block)
+            .marker(Marker::HalfBlock)
+            .x_bounds([left, right])
+            .y_bounds([bottom, top])
+            .paint(|ctx| {
+                for m in self.monitors.iter() {
+                    let color = if self.monitors[self.selected_monitor].name == m.name {
+                        Color::Yellow
+                    } else {
+                        Color::White
+                    };
+
+                    let ((width, height), (x, y), _, _scale) = m.get_info().unwrap();
+                    let m_rect = Rectangle {
+                        x: f64::from(x) / 50.,
+                        y: f64::from(y) / 50.,
+                        width: f64::from(width).mul_add(1. / 50., 0.),
+                        height: f64::from(height).mul_add(1. / 50., 0.),
+                        color,
+                    };
+                    let name_x = m_rect.x + m_rect.width / 2.;
+                    let name_y = m_rect.y + m_rect.height / 2.;
+                    ctx.print(name_x, name_y, m.name.clone());
+
+                    ctx.draw(&m_rect);
+                }
+            });
+
+        f.render_widget(canvas, area);
+    }
+
+    fn render_list_frame(&mut self, f: &mut Frame) {
         let title = Title::from("WorkSpaces");
         let block = Block::default()
             .borders(Borders::ALL)
@@ -158,11 +244,28 @@ impl App {
 
     fn handle_events(&mut self) -> std::io::Result<()> {
         match event::read()? {
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_events(key_event)
-            }
+            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => match self.mode {
+                Mode::List => self.handle_key_events(key_event),
+                Mode::Interactive => self.handle_interactive_key_events(key_event),
+            },
             _ => Ok(()),
         }
+    }
+
+    fn handle_interactive_key_events(&mut self, key_event: KeyEvent) -> std::io::Result<()> {
+        match key_event.code {
+            KeyCode::Char('h') => {
+                self.selected_monitor = (self.selected_monitor - 1) % self.monitors.len();
+
+            }
+            KeyCode::Char('l') => {
+                self.selected_monitor = (self.selected_monitor + 1) % self.monitors.len();
+            }
+            KeyCode::Enter => {}
+            KeyCode::Char('q') | KeyCode::Esc => self.exit = true,
+            _ => {}
+        }
+        Ok(())
     }
 
     fn handle_key_events(&mut self, key_event: KeyEvent) -> std::io::Result<()> {

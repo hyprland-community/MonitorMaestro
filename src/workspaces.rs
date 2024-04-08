@@ -13,7 +13,7 @@ pub enum State {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Monitor {
-    name: String,
+    pub name: String,
     state: State,
 }
 
@@ -23,6 +23,20 @@ impl Monitor {
         Self {
             name: name.to_owned(),
             state,
+        }
+    }
+
+    pub fn get_info(&self) -> Option<((u32, u32), (u32, u32), u32, f32)> {
+        match self.state {
+            State::Enabled { dimensions, position, rerfresh_rate, scaling} => Some((dimensions, position, rerfresh_rate, scaling)),
+            State::Disabled => None, 
+        }
+    }
+
+    pub fn get_position(&self) -> Option<(u32, u32)> {
+        match self.state {
+            State::Enabled { dimensions, position, rerfresh_rate, scaling} => Some(position),
+            State::Disabled => None, 
         }
     }
 }

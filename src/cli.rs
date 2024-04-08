@@ -1,10 +1,22 @@
 use clap::{Parser, Subcommand};
 
-#[derive(Debug, Default, Subcommand)]
+#[derive(Debug, Clone, Default, Subcommand)]
+pub enum Mode {
+    #[default]
+    #[clap(name = "list")]
+    List,
+
+    #[clap(name = "interactive")]
+    Interactive
+}
+
+#[derive(Debug, Subcommand)]
 pub enum Command {
     /// start in tui mode
-    #[default]
-    Tui,
+    Tui {
+        #[command(subcommand)]
+        mode: Mode,
+    },
 
     /// get current monitor layout 
     #[clap(name = "state")]
@@ -21,6 +33,7 @@ pub enum Command {
     #[clap(name = "monitors")]
     Monitors
 }
+
 
 #[derive(Debug, Parser)]
 pub struct Cli {
