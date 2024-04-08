@@ -190,7 +190,7 @@ impl App {
                         Color::White
                     };
 
-                    let ((width, height), (x, y), _, _scale) = m.get_info().unwrap();
+                    let ((width, height), (x, y), _, scale) = m.get_info().unwrap();
                     let m_rect = Rectangle {
                         x: f64::from(x) / 50.,
                         y: f64::from(y) / 50.,
@@ -198,9 +198,12 @@ impl App {
                         height: f64::from(height).mul_add(1. / 50., 0.),
                         color,
                     };
-                    let name_x = m_rect.x + m_rect.width / 2.;
+                    let name_x = m_rect.x + m_rect.width / 2. - 5.;
                     let name_y = m_rect.y + m_rect.height / 2.;
-                    ctx.print(name_x, name_y, m.name.clone());
+                    let name_res = format!("{}, {}x{}", m.name.clone(), width, height);
+                    let infos = format!("{}x{}, {}", x, y, scale); 
+                    ctx.print(name_x, name_y, name_res);
+                    ctx.print(name_x, name_y - 2., infos);
 
                     ctx.draw(&m_rect);
                 }
