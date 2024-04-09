@@ -187,7 +187,7 @@ impl App {
         });
 
         let x_start = (right - f64::from(width_sum) * SCALE) / 2.;
-        let y_start = f64::from(height_sum) * SCALE / 2.;
+        let y_start = (top - f64::from(height_sum) * SCALE) / 2.;
 
         let canvas = Canvas::default()
             .block(block)
