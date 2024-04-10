@@ -149,6 +149,7 @@ impl App {
                 scaling: scale as f32,
             };
             let monitor = Monitor::new(name, state);
+            println!("{:?}", monitor);
             monitors.push(monitor);
         }
 
