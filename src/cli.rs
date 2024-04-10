@@ -5,7 +5,7 @@ pub enum Mode {
     #[clap(name = "list")]
     List {
         #[arg(short, long)]
-        path: String,
+        conf: String,
     },
 
     #[default]
@@ -30,7 +30,7 @@ pub enum Command {
     StartWorkspace {
         /// path to the config file
         #[arg(short, long)]
-        path: String,
+        conf: String,
 
         /// name of the monitor layout to start
         #[arg(short, long)]

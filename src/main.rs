@@ -11,12 +11,12 @@ fn main() -> std::io::Result<()> {
 
     match args.command {
         cli::Command::Tui { mode } => match mode {
-            cli::Mode::List { path } => app::run_list_tui(&path)?,
+            cli::Mode::List { conf } => app::run_list_tui(&conf)?,
             cli::Mode::Interactive => app::run_interactive_tui()?,
         },
         cli::Command::GetState => app::get_state()?,
-        cli::Command::StartWorkspace { path, name } => {
-            app::start_workspace(&path, &name)?;
+        cli::Command::StartWorkspace { conf, name } => {
+            app::start_workspace(&conf, &name)?;
         }
         cli::Command::Monitors => app::get_monitors()?,
     }
