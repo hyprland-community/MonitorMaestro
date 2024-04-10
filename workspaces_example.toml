@@ -1,3 +1,7 @@
+[[Off.monitors]]
+name = "HDMI-A-2"
+state = "Disabled"
+
 [[Normal.monitors]]
 name = "eDP-1"
 
@@ -6,4 +10,13 @@ dimensions = [2560, 1600]
 position = [0, 0]
 rerfresh_rate = 165
 scaling = 1.25
+
+[[Normal.monitors]]
+name = "HDMI-A-1"
+
+[Normal.monitors.state.Enabled]
+dimensions = [100, 100]
+position = [100, 5]
+rerfresh_rate = 60
+scaling = 1.0
 
