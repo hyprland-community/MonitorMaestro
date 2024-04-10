@@ -1,11 +1,14 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Debug, Clone, Default, Subcommand)]
 pub enum Mode {
-    #[default]
     #[clap(name = "list")]
-    List,
+    List {
+        #[arg(short, long)]
+        path: String,
+    },
 
+    #[default]
     #[clap(name = "interactive")]
     Interactive,
 }
@@ -25,7 +28,12 @@ pub enum Command {
     /// start specified monitor layout
     #[clap(name = "workspace")]
     StartWorkspace {
-        #[arg(index = 1)]
+        /// path to the config file
+        #[arg(short, long)]
+        path: String,
+
+        /// name of the monitor layout to start
+        #[arg(short, long)]
         name: String,
     },
 
@@ -34,12 +42,14 @@ pub enum Command {
     Monitors,
 }
 
+#[derive(Clone, Debug, ValueEnum)]
+pub enum Type {
+    Json,
+    Toml,
+}
+
 #[derive(Debug, Parser)]
 pub struct Cli {
-    /// config file path
-    #[arg(short, long, default_value = "./workspaces.json")]
-    pub conf: Option<String>,
-
     /// Command to run
     #[command(subcommand)]
     pub command: Command,

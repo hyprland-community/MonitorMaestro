@@ -1,0 +1,9 @@
+[[Normal.monitors]]
+name = "eDP-1"
+
+[Normal.monitors.state.Enabled]
+dimensions = [2560, 1600]
+position = [0, 0]
+rerfresh_rate = 165
+scaling = 1.25
+

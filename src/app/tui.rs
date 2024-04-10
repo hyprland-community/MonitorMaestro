@@ -17,13 +17,21 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::{
-    cli::Mode,
+    cli::Type,
     workspaces::{Monitor, State, WorkSpace},
 };
 
 use super::Tui;
 
 const SCALE: f64 = 1. / 50.;
+
+#[derive(Debug, Default)]
+enum GuiMode {
+    List,
+
+    #[default]
+    Interactive,
+}
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct App {
@@ -34,7 +42,7 @@ pub struct App {
     pub ws_names: Vec<String>,
 
     #[serde(skip)]
-    mode: Mode,
+    mode: GuiMode,
 
     #[serde(skip)]
     monitors: Vec<Monitor>,
@@ -59,7 +67,7 @@ impl App {
         Self {
             workspaces,
             ws_names,
-            mode: Mode::List,
+            mode: GuiMode::Interactive,
             monitors: Vec::new(),
             selected_monitor: 0,
             index: 0,
@@ -67,9 +75,12 @@ impl App {
         }
     }
 
-    pub fn from_config(path: &str) -> std::io::Result<Self> {
+    pub fn from_config(path: &str, t: Type) -> std::io::Result<Self> {
         let data = std::fs::read_to_string(path)?;
-        let mut app: App = serde_json::from_str(&data)?;
+        let mut app: App = match t {
+            Type::Json => toml::from_str(&data).unwrap(),
+            Type::Toml => serde_json::from_str(&data)?,
+        };
 
         let mut ws_names = Vec::<String>::new();
         for name in app.workspaces.keys() {
@@ -78,12 +89,11 @@ impl App {
         // Sorting alfabetically
         ws_names.sort();
         app.ws_names = ws_names;
-
         Ok(app)
     }
 
     pub fn run_list_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
-        self.mode = Mode::List;
+        self.mode = GuiMode::List;
         while !self.exit {
             terminal.draw(|frame| self.render_list_frame(frame))?;
             self.handle_events()?;
@@ -93,7 +103,7 @@ impl App {
 
     pub fn run_interactive_tui(&mut self, terminal: &mut Tui) -> std::io::Result<()> {
         self.monitors = App::connected_monitors().unwrap();
-        self.mode = Mode::Interactive;
+        self.mode = GuiMode::Interactive;
         while !self.exit {
             terminal.draw(|frame| self.render_interactive_frame(frame))?;
             self.handle_events()?;
@@ -264,8 +274,8 @@ impl App {
     fn handle_events(&mut self) -> std::io::Result<()> {
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => match self.mode {
-                Mode::List => self.handle_key_events(key_event),
-                Mode::Interactive => self.handle_interactive_key_events(key_event),
+                GuiMode::List => self.handle_key_events(key_event),
+                GuiMode::Interactive => self.handle_interactive_key_events(key_event),
             },
             _ => Ok(()),
         }
