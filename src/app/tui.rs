@@ -78,8 +78,8 @@ impl App {
     pub fn from_config(path: &str, t: Type) -> std::io::Result<Self> {
         let data = std::fs::read_to_string(path)?;
         let mut app: App = match t {
-            Type::Json => toml::from_str(&data).unwrap(),
-            Type::Toml => serde_json::from_str(&data)?,
+            Type::Toml => toml::from_str(&data).unwrap(),
+            Type::Json => serde_json::from_str(&data)?,
         };
 
         let mut ws_names = Vec::<String>::new();
